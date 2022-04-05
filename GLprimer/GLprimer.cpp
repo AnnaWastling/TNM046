@@ -32,7 +32,11 @@
 // GLFW 3.x, to handle the OpenGL window
 #include <GLFW/glfw3.h>
 
+
+/*********lab1*******/
 #include "Utilities.hpp"
+#include <vector>
+#include "Shader.hpp"
 
 /*
  * main(int argc, char* argv[]) - the standard C++ entry point for the program
@@ -79,23 +83,80 @@ int main(int, char*[]) {
               << "\nGL version:      " << glGetString(GL_VERSION)
               << "\nDesktop size:    " << vidmode->width << " x " << vidmode->height << "\n";
 
-    // Get window size. It may start out different from the requested size and
-    // will change if the user resizes the window
+    /****************Declarations****************************/
+    // for resizing window
     int width, height;
-    glfwGetWindowSize(window, &width, &height);
-    // Set viewport. This is the pixel rectangle we want to draw into
-    glViewport(0, 0, width, height);  // The entire window
+    // Vertex coordinates (x,y,z) for three vertices
+    // for triangle
+    const std::vector<GLfloat> vertexArrayData = {
+        -1.0f, -1.0f, 0.0f,  // First vertex, xyz
+        1.0f,  -1.0f, 0.0f,  // Second vertex, xyz
+        0.0f,  1.0f,  0.0f   // Third vertex, xyz
+    };  
+     // colorarray
+    const std::vector<GLfloat> colorArrayData = {
+        1.0f, 0.0f, 0.0f,  // Red
+        0.0f, 1.0f, 0.0f,  // Green
+        0.0f, 0.0f, 1.0f,  // Blue
+    };
+    // the order
+    const std::vector<GLuint> indexArrayData = {0, 1, 2};
+
+    // get shaders
+    Shader myShader;
+    /*******************************************************/
+    /******************************lab1*********************************************/
+    // 1. Create a vertex array object (VAO) to refer to your geometry, 
+    // put the resulting identifier in vertexArrayID
+    GLuint vertexArrayID = 0;
+    glGenVertexArrays(1, &vertexArrayID);
+    // 2. Activate (“bind”) the vertex array object
+    glBindVertexArray(vertexArrayID);
+    // Create the vertex buffer objects for attribute locations 0 and 1
+    // (the list of vertex coordinates and the list of vertex colors).
+    GLuint vertexBufferID = util::createVertexBuffer(0, 3, vertexArrayData);
+    GLuint colorBufferID = util::createVertexBuffer(1, 3, colorArrayData);
+    // Create the index buffer object (the list of triangles).
+    GLuint indexBufferID = util::createIndexBuffer(indexArrayData);
+
+    // Deactivate the vertex array object again to be nice
+    glBindVertexArray(0);
+
+    //create the shaders
+    myShader.createShader("vertex.glsl", "fragment.glsl");
+    /****************************************************************************/
 
     glfwSwapInterval(0);  // Do not wait for screen refresh between frames
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
+        /******************lab1*************************/
+        // Get window size. It may start out different from the requested size and
+        // will change if the user resizes the window
+        glfwGetWindowSize(window, &width, &height);
+        // Set viewport. This is the pixel rectangle we want to draw into
+        glViewport(0, 0, width, height);  // The entire window
+
+        /******************lab1*************************/
+        //display frame rate
+        util::displayFPS(window);
+
         // Set the clear color to a dark gray (RGBA)
         glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
         // Clear the color and depth buffers for drawing
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        /* ---- Rendering code should go here ---- */
+        /* ---- Rendering code should go here ---- */        
+        
+        /******************lab1*************************/
+        glUseProgram(myShader.id());
+        // Activate the vertex array object we want to draw (we may have several)
+        glBindVertexArray(vertexArrayID);
+        // Draw our triangle with 3 vertices.
+        // When the last argument of glDrawElements is nullptr, it means
+        // "use the previously bound index buffer". (This is not obvious.)
+        // The index buffer is part of the VAO state and is bound with it.
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
@@ -108,6 +169,12 @@ int main(int, char*[]) {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
     }
+    /***********************lab1******************************/
+    // release the vertex and index buffers as well as the vertex array
+    glDeleteVertexArrays(1, &vertexArrayID);
+    glDeleteBuffers(1, &vertexBufferID);
+    glDeleteBuffers(1, &colorBufferID);
+    glDeleteBuffers(1, &indexBufferID);
 
     // Close the OpenGL window and terminate GLFW
     glfwDestroyWindow(window);

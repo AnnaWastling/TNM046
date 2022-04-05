@@ -7,6 +7,13 @@
  * This code is in the public domain.
  */
 #pragma once
+// glew provides easy access to advanced OpenGL functions and extensions
+#include <GL/glew.h>
+
+// GLFW 3.x, to handle the OpenGL window
+#include <GLFW/glfw3.h>
+#include <vector>
+
 
 struct GLFWwindow;
 
@@ -22,5 +29,6 @@ namespace util {
  * windows. Call it only for one window, and only once every frame.
  */
 double displayFPS(GLFWwindow* window);
-
+GLuint createVertexBuffer(int location, int dimensions, const std::vector<float>& vertices);
+GLuint createIndexBuffer(const std::vector<unsigned int>& indices);
 }  // namespace util
