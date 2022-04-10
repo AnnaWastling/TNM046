@@ -13,6 +13,7 @@
 // GLFW 3.x, to handle the OpenGL window
 #include <GLFW/glfw3.h>
 #include <vector>
+#include <array>
 
 
 struct GLFWwindow;
@@ -33,10 +34,14 @@ double displayFPS(GLFWwindow* window);
 GLuint createVertexBuffer(int location, int dimensions, const std::vector<float>& vertices);
 GLuint createIndexBuffer(const std::vector<unsigned int>& indices);
 /*******lab2**********/
+std::array<float, 16> mat4mult(const std::array<float, 16>& M1, const std::array<float, 16>& M2);
 std::array<float, 16> mat4identity();
+void mat4print(float M[]);
 std::array<float, 16> mat4rotx(float angle);
 std::array<float, 16> mat4roty(float angle);
 std::array<float, 16> mat4rotz(float angle);
 std::array<float, 16> mat4scale(float scale);
 std::array<float, 16> mat4translate(float x, float y, float z);
+
+
 }  // namespace util

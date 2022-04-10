@@ -72,4 +72,107 @@ GLuint createIndexBuffer(const std::vector<unsigned int>& indices) {
     return bufferID;
 }
 
+std::array<float, 16> mat4mult(const std::array<float, 16>& M1, const std::array<float, 16>& M2) {
+    std::array<float, 16> Mres;
+    // Rad1
+    Mres[0] = M1[0] * M2[0] + M1[4] * M2[1] + M1[8] * M2[2] + M1[12] * M2[3];
+    Mres[1] = M1[0] * M2[4] + M1[4] * M2[5] + M1[8] * M2[6] + M1[12] * M2[7];
+    Mres[2] = M1[0] * M2[8] + M1[4] * M2[9] + M1[8] * M2[10] + M1[12] * M2[11];
+    Mres[3] = M1[0] * M2[12] + M1[4] * M2[13] + M1[8] * M2[14] + M1[12] * M2[15];
+
+    // Rad2
+    Mres[4] = M1[1] * M2[0] + M1[5] * M2[1] + M1[9] * M2[2] + M1[13] * M2[3];
+    Mres[5] = M1[1] * M2[4] + M1[5] * M2[5] + M1[9] * M2[6] + M1[13] * M2[7];
+    Mres[6] = M1[1] * M2[8] + M1[5] * M2[9] + M1[9] * M2[10] + M1[13] * M2[11];
+    Mres[7] = M1[1] * M2[12] + M1[5] * M2[13] + M1[9] * M2[14] + M1[13] * M2[15];
+
+    // Rad3
+    Mres[8] = M1[2] * M2[0] + M1[6] * M2[1] + M1[10] * M2[2] + M1[14] * M2[3];
+    Mres[9] = M1[2] * M2[4] + M1[6] * M2[5] + M1[10] * M2[6] + M1[14] * M2[7];
+    Mres[10] = M1[2] * M2[8] + M1[6] * M2[9] + M1[10] * M2[10] + M1[14] * M2[11];
+    Mres[11] = M1[2] * M2[12] + M1[6] * M2[13] + M1[10] * M2[14] + M1[14] * M2[15];
+
+    // Rad4
+    Mres[12] = M1[3] * M2[0] + M1[7] * M2[1] + M1[11] * M2[2] + M1[15] * M2[3];
+    Mres[13] = M1[3] * M2[4] + M1[7] * M2[5] + M1[11] * M2[6] + M1[15] * M2[7];
+    Mres[14] = M1[3] * M2[8] + M1[7] * M2[9] + M1[11] * M2[10] + M1[15] * M2[11];
+    Mres[15] = M1[3] * M2[12] + M1[7] * M2[13] + M1[11] * M2[14] + M1[15] * M2[15];
+
+ return Mres;
+}
+
+// Identity matrix = enhetsmatris
+std::array<float, 16> mat4identity() {
+    std::array<float, 16> res = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+return res;
+}
+
+// Print the elements of a matrix M
+void mat4print(float M[]) {
+    printf(" Matrix :\n");
+    printf("%6.2f %6.2f %6.2f %6.2f\n", M[0], M[4], M[8], M[12]);
+    printf("%6.2f %6.2f %6.2f %6.2f\n", M[1], M[5], M[9], M[13]);
+    printf("%6.2f %6.2f %6.2f %6.2f\n", M[2], M[6], M[10], M[14]);
+    printf("%6.2f %6.2f %6.2f %6.2f\n", M[3], M[7], M[11], M[15]);
+    printf("\n");
+};
+
+std::array<float, 16> mat4rotx( float angle) {
+    std::array<float, 16> res = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, cos(angle), sin(angle), 0.0f,
+        0.0f, -sin(angle), cos(angle), 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f};
+
+return res;
+}
+
+std::array<float, 16> mat4roty( float angle) {
+    std::array<float, 16> res = {
+        cos(angle), 0.0f, sin(angle), 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        -sin(angle), 0.0f, cos(angle), 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    return res;
+}
+std::array<float, 16> mat4rotz(float angle) {
+    std::array<float, 16> res = {
+        cos(angle), sin(angle), 0.0f, 0.0f,
+        -sin(angle), cos(angle), 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    return res;
+}
+
+std::array<float, 16> mat4scale(float scale) {
+    std::array<float, 16> res = {
+        scale, 0.0f, 0.0f, 0.0f,
+        0.0f, scale, 0.0f, 0.0f, 
+        0.0f,  0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f,  0.0f, 1.0f
+    };
+
+return res;
+}
+
+std::array<float, 16> mat4translate(float x, float y, float z) {
+    std::array<float, 16> res = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        x,    y,    z,    1.0f
+    };
+
+    return res;
+}
 }  // namespace util

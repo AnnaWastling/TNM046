@@ -36,6 +36,7 @@
 /*********lab1*******/
 #include "Utilities.hpp"
 #include <vector>
+#include <array>
 #include "Shader.hpp"
 
 /*
@@ -98,24 +99,23 @@ int main(int, char*[]) {
         1.0f, 0.0f, 0.0f,  // Red
         0.0f, 1.0f, 0.0f,  // Green
         0.0f, 0.0f, 1.0f,  // Blue
-    };
-    GLfloat matT[16] = { ////inclompete type not allowed
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };    
-        GLfloat matR[16] = {////inclompete type not allowed
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 8.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f, 
-        0.0f, 0.0f, 0.0f, 1.0f};  
-    // //std::array<GLfloat, 16> matT = { ////inclompete type not allowed
+    }; 
+     std::array<GLfloat, 16> matT;
+    //     = { ////inclompete type not allowed
     //    1.0f, 0.0f, 0.0f, 0.0f,
     //    0.0f, 1.0f, 0.0f, 0.0f,
     //    0.0f, 0.0f, 1.0f, 0.0f, 
+    //    0.1f, 0.1f, 0.0f, 1.0f
+    //};
+
+    std::array<GLfloat, 16> matR;
+    // = {////inclompete type not allowed
+    //    cos(3), sin(0), 0.0f, 0.0f,
+    //    -sin(0), cos(0),0.0f, 0.0f,
+    //    0.0f, 0.0f, 1.0f, 0.0f,
     //    0.0f, 0.0f, 0.0f, 1.0f
     //};
+    std::array<GLfloat, 16> matRes;
     // the order
     const std::vector<GLuint> indexArrayData = {0, 1, 2};
 
@@ -186,13 +186,19 @@ int main(int, char*[]) {
             static_cast<float>(glfwGetTime());  // Number of seconds since the program was started
         glUseProgram(myShader.id());            // Activate the shader to set its variables
         glUniform1f(locationTime, time);        // Copy the value to the shader program
-
-
-
-        GLint locationT = glGetUniformLocation(myShader.id(), "T");
+        matT = util::mat4identity();
+        matT = util::mat4translate(0.1, 0.1, 0.0);
+        matR = util::mat4identity();
+        matR = util::mat4rotz(2.6);
+        matRes = util::mat4mult(matT, matR);
+        //GLint locationT = glGetUniformLocation(myShader.id(), "T");
+        //GLint locationR = glGetUniformLocation(myShader.id(), "R");
+        GLint locationRes = glGetUniformLocation(myShader.id(), "Res");
         glUseProgram(myShader.id());  // Activate the shader to set its variables
-        glUniformMatrix4fv(locationT, 1, GL_FALSE, matT);  // Copy the value
-                                       
+        //glUniformMatrix4fv(locationT, 1, GL_FALSE, matT.data());  // Copy the value
+        //glUniformMatrix4fv(locationR, 1, GL_FALSE, matR.data());  // Copy the value
+        glUniformMatrix4fv(locationRes, 1, GL_FALSE, matRes.data());  // Copy the value
+      
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
 
