@@ -71,4 +71,5 @@ GLuint createIndexBuffer(const std::vector<unsigned int>& indices) {
 
     return bufferID;
 }
+
 }  // namespace util

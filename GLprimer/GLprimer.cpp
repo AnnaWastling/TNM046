@@ -99,6 +99,13 @@ int main(int, char*[]) {
         0.0f, 1.0f, 0.0f,  // Green
         0.0f, 0.0f, 1.0f,  // Blue
     };
+    float matT[16];
+    std::array<GLfloat, 16> matT = { ////inclompete type not allowed
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
     // the order
     const std::vector<GLuint> indexArrayData = {0, 1, 2};
 
@@ -127,6 +134,12 @@ int main(int, char*[]) {
     /****************************************************************************/
 
     glfwSwapInterval(0);  // Do not wait for screen refresh between frames
+
+    // Do this before the rendering loop
+    GLint locationTime = glGetUniformLocation(myShader.id(), "time");
+    if (locationTime == -1) {  // If the variable is not found, -1 is returned
+        std::cout << "Unable to locate variable 'time' in shader!\n";
+    }
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
@@ -157,7 +170,19 @@ int main(int, char*[]) {
         // "use the previously bound index buffer". (This is not obvious.)
         // The index buffer is part of the VAO state and is bound with it.
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+        /***************lab2********************/
+        // Do this in the rendering loop to update the uniform variable "time"
+        float time =
+            static_cast<float>(glfwGetTime());  // Number of seconds since the program was started
+        glUseProgram(myShader.id());            // Activate the shader to set its variables
+        glUniform1f(locationTime, time);        // Copy the value to the shader program
 
+
+
+        GLint locationT = glGetUniformLocation(myShader.id(), "T");
+        glUseProgram(myShader.id());  // Activate the shader to set its variables
+        glUniformMatrix4fv(locationT, 1, GL_FALSE, matT.data());  // Copy the value
+                                       
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
 

@@ -29,6 +29,14 @@ namespace util {
  * windows. Call it only for one window, and only once every frame.
  */
 double displayFPS(GLFWwindow* window);
+/********lab1********/
 GLuint createVertexBuffer(int location, int dimensions, const std::vector<float>& vertices);
 GLuint createIndexBuffer(const std::vector<unsigned int>& indices);
+/*******lab2**********/
+std::array<float, 16> mat4identity();
+std::array<float, 16> mat4rotx(float angle);
+std::array<float, 16> mat4roty(float angle);
+std::array<float, 16> mat4rotz(float angle);
+std::array<float, 16> mat4scale(float scale);
+std::array<float, 16> mat4translate(float x, float y, float z);
 }  // namespace util
