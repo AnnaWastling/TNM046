@@ -99,13 +99,23 @@ int main(int, char*[]) {
         0.0f, 1.0f, 0.0f,  // Green
         0.0f, 0.0f, 1.0f,  // Blue
     };
-    float matT[16];
-    std::array<GLfloat, 16> matT = { ////inclompete type not allowed
+    GLfloat matT[16] = { ////inclompete type not allowed
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f, 
+        0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f
-    };
+    };    
+        GLfloat matR[16] = {////inclompete type not allowed
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 8.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 
+        0.0f, 0.0f, 0.0f, 1.0f};  
+    // //std::array<GLfloat, 16> matT = { ////inclompete type not allowed
+    //    1.0f, 0.0f, 0.0f, 0.0f,
+    //    0.0f, 1.0f, 0.0f, 0.0f,
+    //    0.0f, 0.0f, 1.0f, 0.0f, 
+    //    0.0f, 0.0f, 0.0f, 1.0f
+    //};
     // the order
     const std::vector<GLuint> indexArrayData = {0, 1, 2};
 
@@ -181,7 +191,7 @@ int main(int, char*[]) {
 
         GLint locationT = glGetUniformLocation(myShader.id(), "T");
         glUseProgram(myShader.id());  // Activate the shader to set its variables
-        glUniformMatrix4fv(locationT, 1, GL_FALSE, matT.data());  // Copy the value
+        glUniformMatrix4fv(locationT, 1, GL_FALSE, matT);  // Copy the value
                                        
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
