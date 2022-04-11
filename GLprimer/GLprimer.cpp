@@ -118,7 +118,7 @@ int main(int, char*[]) {
     std::array<GLfloat, 16> matRes;
     // the order
     const std::vector<GLuint> indexArrayData = {0, 1, 2};
-
+    float time;
     // get shaders
     Shader myShader;
     /*******************************************************/
@@ -159,7 +159,6 @@ int main(int, char*[]) {
         glfwGetWindowSize(window, &width, &height);
         // Set viewport. This is the pixel rectangle we want to draw into
         glViewport(0, 0, width, height);  // The entire window
-
         /******************lab1*************************/
         //display frame rate
         util::displayFPS(window);
@@ -182,23 +181,36 @@ int main(int, char*[]) {
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
         /***************lab2********************/
         // Do this in the rendering loop to update the uniform variable "time"
-        float time =
-            static_cast<float>(glfwGetTime());  // Number of seconds since the program was started
+        time = static_cast<float>(glfwGetTime());  // Number of seconds since the program was started
         glUseProgram(myShader.id());            // Activate the shader to set its variables
         glUniform1f(locationTime, time);        // Copy the value to the shader program
+
+        // Transformations
         matT = util::mat4identity();
         matT = util::mat4translate(0.1, 0.1, 0.0);
         matR = util::mat4identity();
-        matR = util::mat4rotz(2.6);
+        matR = util::mat4roty(time * 2 * M_PI);
         matRes = util::mat4mult(matT, matR);
-        //GLint locationT = glGetUniformLocation(myShader.id(), "T");
-        //GLint locationR = glGetUniformLocation(myShader.id(), "R");
+
+        GLint locationT = glGetUniformLocation(myShader.id(), "T");
+        GLint locationR = glGetUniformLocation(myShader.id(), "R");
         GLint locationRes = glGetUniformLocation(myShader.id(), "Res");
+
         glUseProgram(myShader.id());  // Activate the shader to set its variables
-        //glUniformMatrix4fv(locationT, 1, GL_FALSE, matT.data());  // Copy the value
-        //glUniformMatrix4fv(locationR, 1, GL_FALSE, matR.data());  // Copy the value
+        glUniformMatrix4fv(locationT, 1, GL_FALSE, matT.data());  // Copy the value
+        glUniformMatrix4fv(locationR, 1, GL_FALSE, matR.data());  // Copy the value
         glUniformMatrix4fv(locationRes, 1, GL_FALSE, matRes.data());  // Copy the value
       
+        // Don´t show when bakside
+        //glEnable(GL_CULL_FACE);
+        
+        //DONT WORK
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glCullFace(GL_BACK);
+        //// Show only lines
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //glCullFace(GL_FRONT);
+
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
 
