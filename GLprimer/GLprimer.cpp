@@ -33,11 +33,12 @@
 #include <GLFW/glfw3.h>
 
 
-/*********lab1*******/
 #include "Utilities.hpp"
 #include <vector>
 #include <array>
 #include "Shader.hpp"
+
+#include "TriangleSoup.hpp"
 
 /*
  * main(int argc, char* argv[]) - the standard C++ entry point for the program
@@ -89,16 +90,49 @@ int main(int, char*[]) {
     int width, height;
     // Vertex coordinates (x,y,z) for three vertices
     // for triangle
-    const std::vector<GLfloat> vertexArrayData = {
-        -1.0f, -1.0f, 0.0f,  // First vertex, xyz
-        1.0f,  -1.0f, 0.0f,  // Second vertex, xyz
-        0.0f,  1.0f,  0.0f   // Third vertex, xyz
-    };  
+    //const std::vector<GLfloat> vertexArrayData = {
+    //    -1.0f, -1.0f, 0.0f,  // First vertex, xyz
+    //    1.0f,  -1.0f, 0.0f,  // Second vertex, xyz
+    //    0.0f,  1.0f,  0.0f   // Third vertex, xyz
+    //};  
      // colorarray
     const std::vector<GLfloat> colorArrayData = {
-        1.0f, 0.0f, 0.0f,  // Red
-        0.0f, 1.0f, 0.0f,  // Green
-        0.0f, 0.0f, 1.0f,  // Blue
+        // P0
+        1.0f, 0.0f, 0.3f,  // Red
+        0.0f, 0.5f, 0.0f,  // Green
+        0.3f, 0.3f, 0.3f,  // Blue
+        // P1
+        1.0f, 0.0f, 0.3f,  // Red
+        0.2f, 0.2f, 0.2f,  // Green
+        0.3f, 0.3f, 0.3f,  // Blue
+        // P2
+        1.0f, 0.0f, 0.3f,  // Red
+        0.2f, 0.2f, 0.2f,  // Green
+        0.0f, 0.0f, 0.0f,  // Blue
+        // P3
+        1.0f, 0.0f, 0.3f,  // Red
+        0.0f, 0.5f, 0.0f,  // Green
+        0.0f, 0.0f, 0.0f,  // Blue
+
+        // P4
+        0.8f, 0.8f, 0.8f,  // Red
+        0.0f, 0.5f, 0.0f,  // Green
+        0.3f, 0.3f, 0.3f,  // Blue
+
+        // P5
+        0.8f, 0.8f, 0.8f,  // Red
+        0.2f, 0.2f, 0.2f,  // Green
+        0.3f, 0.3f, 0.3f,  // Blue
+
+        // P6
+        0.8f, 0.8f, 0.8f,  // Red
+        0.2f, 0.2f, 0.2f,  // Green
+        0.0f, 0.0f, 0.0f,  // Blue
+
+        // P7
+        0.8f, 0.8f, 0.8f,  // Red
+        0.0f, 0.5f, 0.0f,  // Green
+        0.0f, 0.0f, 0.0f,  // Blue
     }; 
      std::array<GLfloat, 16> matT;
     //     = { ////inclompete type not allowed
@@ -131,10 +165,10 @@ int main(int, char*[]) {
     glBindVertexArray(vertexArrayID);
     // Create the vertex buffer objects for attribute locations 0 and 1
     // (the list of vertex coordinates and the list of vertex colors).
-    GLuint vertexBufferID = util::createVertexBuffer(0, 3, vertexArrayData);
+    //GLuint vertexBufferID = util::createVertexBuffer(0, 3, vertexArrayData);
     GLuint colorBufferID = util::createVertexBuffer(1, 3, colorArrayData);
     // Create the index buffer object (the list of triangles).
-    GLuint indexBufferID = util::createIndexBuffer(indexArrayData);
+    //GLuint indexBufferID = util::createIndexBuffer(indexArrayData);
 
     // Deactivate the vertex array object again to be nice
     glBindVertexArray(0);
@@ -150,7 +184,8 @@ int main(int, char*[]) {
     if (locationTime == -1) {  // If the variable is not found, -1 is returned
         std::cout << "Unable to locate variable 'time' in shader!\n";
     }
-
+    TriangleSoup myShape;
+    myShape.createBox(0.1,0.1,0.1);
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         /******************lab1*************************/
@@ -169,7 +204,7 @@ int main(int, char*[]) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         /* ---- Rendering code should go here ---- */        
-        
+        myShape.render();
         /******************lab1*************************/
         glUseProgram(myShader.id());
         // Activate the vertex array object we want to draw (we may have several)
@@ -189,7 +224,7 @@ int main(int, char*[]) {
         matT = util::mat4identity();
         matT = util::mat4translate(0.1, 0.1, 0.0);
         matR = util::mat4identity();
-        matR = util::mat4roty(time * 2 * M_PI);
+        matR = util::mat4roty(time * 1 * M_PI);
         matRes = util::mat4mult(matT, matR);
 
         GLint locationT = glGetUniformLocation(myShader.id(), "T");
@@ -203,13 +238,6 @@ int main(int, char*[]) {
       
         // Don´t show when bakside
         //glEnable(GL_CULL_FACE);
-        
-        //DONT WORK
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        //glCullFace(GL_BACK);
-        //// Show only lines
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        //glCullFace(GL_FRONT);
 
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
@@ -225,9 +253,9 @@ int main(int, char*[]) {
     /***********************lab1******************************/
     // release the vertex and index buffers as well as the vertex array
     glDeleteVertexArrays(1, &vertexArrayID);
-    glDeleteBuffers(1, &vertexBufferID);
+    //glDeleteBuffers(1, &vertexBufferID);
     glDeleteBuffers(1, &colorBufferID);
-    glDeleteBuffers(1, &indexBufferID);
+    //glDeleteBuffers(1, &indexBufferID);
 
     // Close the OpenGL window and terminate GLFW
     glfwDestroyWindow(window);
