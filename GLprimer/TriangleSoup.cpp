@@ -163,18 +163,18 @@ void TriangleSoup::createBox(float xsize, float ysize, float zsize) {
         xsize,  ysize,  -zsize, 0.0f,  1.0f,  0.0f,  1.0 / 2.0f, 2.0 / 3.0f,
     };
     const GLuint index_array_data[] = {
-        0, 3,  9,  
-        3, 6,  9,  
+        0, 3, 9,  
+        3, 6, 9,  
         1, 10, 22, 
         1, 22, 13, 
-        5, 2,  14,
+        5, 2, 14,
         5, 14, 17, 
         15, 21, 18,
         15, 12, 21,
         4, 19, 7,
         4, 16, 19,
         23, 11, 8,
-        23, 8,  20
+        23, 8, 20
     };
 
     nverts_ = 24;

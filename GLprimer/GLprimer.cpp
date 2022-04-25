@@ -37,7 +37,6 @@
 #include <vector>
 #include <array>
 #include "Shader.hpp"
-
 #include "TriangleSoup.hpp"
 
 /*
@@ -88,90 +87,53 @@ int main(int, char*[]) {
     /****************Declarations****************************/
     // for resizing window
     int width, height;
-    // Vertex coordinates (x,y,z) for three vertices
-    // for triangle
-    //const std::vector<GLfloat> vertexArrayData = {
-    //    -1.0f, -1.0f, 0.0f,  // First vertex, xyz
-    //    1.0f,  -1.0f, 0.0f,  // Second vertex, xyz
-    //    0.0f,  1.0f,  0.0f   // Third vertex, xyz
-    //};  
-     // colorarray
-    const std::vector<GLfloat> colorArrayData = {
-        // P0
-        1.0f, 0.0f, 0.3f,  // Red
-        0.0f, 0.5f, 0.0f,  // Green
-        0.3f, 0.3f, 0.3f,  // Blue
-        // P1
-        1.0f, 0.0f, 0.3f,  // Red
-        0.2f, 0.2f, 0.2f,  // Green
-        0.3f, 0.3f, 0.3f,  // Blue
-        // P2
-        1.0f, 0.0f, 0.3f,  // Red
-        0.2f, 0.2f, 0.2f,  // Green
-        0.0f, 0.0f, 0.0f,  // Blue
-        // P3
-        1.0f, 0.0f, 0.3f,  // Red
-        0.0f, 0.5f, 0.0f,  // Green
-        0.0f, 0.0f, 0.0f,  // Blue
 
-        // P4
-        0.8f, 0.8f, 0.8f,  // Red
-        0.0f, 0.5f, 0.0f,  // Green
-        0.3f, 0.3f, 0.3f,  // Blue
+    // // colorarray
+    //const std::vector<GLfloat> colorArrayData = {
+    //    // P0
+    //    1.0f, 0.0f, 0.3f,  // Red
+    //    0.0f, 0.5f, 0.0f,  // Green
+    //    0.3f, 0.3f, 0.3f,  // Blue
+    //    // P1
+    //    1.0f, 0.0f, 0.3f,  // Red
+    //    0.2f, 0.2f, 0.2f,  // Green
+    //    0.3f, 0.3f, 0.3f,  // Blue
+    //    // P2
+    //    1.0f, 0.0f, 0.3f,  // Red
+    //    0.2f, 0.2f, 0.2f,  // Green
+    //    0.0f, 0.0f, 0.0f,  // Blue
+    //    // P3
+    //    1.0f, 0.0f, 0.3f,  // Red
+    //    0.0f, 0.5f, 0.0f,  // Green
+    //    0.0f, 0.0f, 0.0f,  // Blue
 
-        // P5
-        0.8f, 0.8f, 0.8f,  // Red
-        0.2f, 0.2f, 0.2f,  // Green
-        0.3f, 0.3f, 0.3f,  // Blue
+    //    // P4
+    //    0.8f, 0.8f, 0.8f,  // Red
+    //    0.0f, 0.5f, 0.0f,  // Green
+    //    0.3f, 0.3f, 0.3f,  // Blue
 
-        // P6
-        0.8f, 0.8f, 0.8f,  // Red
-        0.2f, 0.2f, 0.2f,  // Green
-        0.0f, 0.0f, 0.0f,  // Blue
+    //    // P5
+    //    0.8f, 0.8f, 0.8f,  // Red
+    //    0.2f, 0.2f, 0.2f,  // Green
+    //    0.3f, 0.3f, 0.3f,  // Blue
 
-        // P7
-        0.8f, 0.8f, 0.8f,  // Red
-        0.0f, 0.5f, 0.0f,  // Green
-        0.0f, 0.0f, 0.0f,  // Blue
-    }; 
+    //    // P6
+    //    0.8f, 0.8f, 0.8f,  // Red
+    //    0.2f, 0.2f, 0.2f,  // Green
+    //    0.0f, 0.0f, 0.0f,  // Blue
+
+    //    // P7
+    //    0.8f, 0.8f, 0.8f,  // Red
+    //    0.0f, 0.5f, 0.0f,  // Green
+    //    0.0f, 0.0f, 0.0f,  // Blue
+    //}; 
      std::array<GLfloat, 16> matT;
-    //     = { ////inclompete type not allowed
-    //    1.0f, 0.0f, 0.0f, 0.0f,
-    //    0.0f, 1.0f, 0.0f, 0.0f,
-    //    0.0f, 0.0f, 1.0f, 0.0f, 
-    //    0.1f, 0.1f, 0.0f, 1.0f
-    //};
-
     std::array<GLfloat, 16> matR;
-    // = {////inclompete type not allowed
-    //    cos(3), sin(0), 0.0f, 0.0f,
-    //    -sin(0), cos(0),0.0f, 0.0f,
-    //    0.0f, 0.0f, 1.0f, 0.0f,
-    //    0.0f, 0.0f, 0.0f, 1.0f
-    //};
     std::array<GLfloat, 16> matRes;
-    // the order
-    const std::vector<GLuint> indexArrayData = {0, 1, 2};
+
     float time;
     // get shaders
     Shader myShader;
-    /*******************************************************/
-    /******************************lab1*********************************************/
-    // 1. Create a vertex array object (VAO) to refer to your geometry, 
-    // put the resulting identifier in vertexArrayID
-    GLuint vertexArrayID = 0;
-    glGenVertexArrays(1, &vertexArrayID);
-    // 2. Activate (“bind”) the vertex array object
-    glBindVertexArray(vertexArrayID);
-    // Create the vertex buffer objects for attribute locations 0 and 1
-    // (the list of vertex coordinates and the list of vertex colors).
-    //GLuint vertexBufferID = util::createVertexBuffer(0, 3, vertexArrayData);
-    GLuint colorBufferID = util::createVertexBuffer(1, 3, colorArrayData);
-    // Create the index buffer object (the list of triangles).
-    //GLuint indexBufferID = util::createIndexBuffer(indexArrayData);
-
-    // Deactivate the vertex array object again to be nice
-    glBindVertexArray(0);
 
     //create the shaders
     myShader.createShader("vertex.glsl", "fragment.glsl");
@@ -179,13 +141,13 @@ int main(int, char*[]) {
 
     glfwSwapInterval(0);  // Do not wait for screen refresh between frames
 
-    // Do this before the rendering loop
     GLint locationTime = glGetUniformLocation(myShader.id(), "time");
     if (locationTime == -1) {  // If the variable is not found, -1 is returned
         std::cout << "Unable to locate variable 'time' in shader!\n";
     }
     TriangleSoup myShape;
-    myShape.createBox(0.1,0.1,0.1);
+    myShape.createSphere(0.5,100);
+
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         /******************lab1*************************/
@@ -202,42 +164,34 @@ int main(int, char*[]) {
         glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
         // Clear the color and depth buffers for drawing
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(myShader.id());  // Activate the shader to set its variables
 
-        /* ---- Rendering code should go here ---- */        
-        myShape.render();
-        /******************lab1*************************/
-        glUseProgram(myShader.id());
-        // Activate the vertex array object we want to draw (we may have several)
-        glBindVertexArray(vertexArrayID);
-        // Draw our triangle with 3 vertices.
-        // When the last argument of glDrawElements is nullptr, it means
-        // "use the previously bound index buffer". (This is not obvious.)
-        // The index buffer is part of the VAO state and is bound with it.
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
-        /***************lab2********************/
-        // Do this in the rendering loop to update the uniform variable "time"
+        /* ---- Rendering code should go here ---- */     
         time = static_cast<float>(glfwGetTime());  // Number of seconds since the program was started
-        glUseProgram(myShader.id());            // Activate the shader to set its variables
         glUniform1f(locationTime, time);        // Copy the value to the shader program
+
+        myShape.render();
 
         // Transformations
         matT = util::mat4identity();
         matT = util::mat4translate(0.1, 0.1, 0.0);
         matR = util::mat4identity();
-        matR = util::mat4roty(time * 1 * M_PI);
+        matR = util::mat4roty(time  * M_PI);
         matRes = util::mat4mult(matT, matR);
 
         GLint locationT = glGetUniformLocation(myShader.id(), "T");
         GLint locationR = glGetUniformLocation(myShader.id(), "R");
         GLint locationRes = glGetUniformLocation(myShader.id(), "Res");
 
-        glUseProgram(myShader.id());  // Activate the shader to set its variables
+
         glUniformMatrix4fv(locationT, 1, GL_FALSE, matT.data());  // Copy the value
         glUniformMatrix4fv(locationR, 1, GL_FALSE, matR.data());  // Copy the value
         glUniformMatrix4fv(locationRes, 1, GL_FALSE, matRes.data());  // Copy the value
       
         // Don´t show when bakside
         //glEnable(GL_CULL_FACE);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glCullFace(GL_BACK);
 
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
@@ -252,10 +206,7 @@ int main(int, char*[]) {
     }
     /***********************lab1******************************/
     // release the vertex and index buffers as well as the vertex array
-    glDeleteVertexArrays(1, &vertexArrayID);
-    //glDeleteBuffers(1, &vertexBufferID);
-    glDeleteBuffers(1, &colorBufferID);
-    //glDeleteBuffers(1, &indexBufferID);
+   // glDeleteBuffers(1, &colorBufferID);
 
     // Close the OpenGL window and terminate GLFW
     glfwDestroyWindow(window);
