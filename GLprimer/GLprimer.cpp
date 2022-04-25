@@ -101,7 +101,7 @@ int main(int, char*[]) {
         0.0f, 0.0f, 1.0f,  // Blue
     }; 
      std::array<GLfloat, 16> matT;
-    //     = { 
+    //     = { ////inclompete type not allowed
     //    1.0f, 0.0f, 0.0f, 0.0f,
     //    0.0f, 1.0f, 0.0f, 0.0f,
     //    0.0f, 0.0f, 1.0f, 0.0f, 
@@ -109,7 +109,7 @@ int main(int, char*[]) {
     //};
 
     std::array<GLfloat, 16> matR;
-    // = {
+    // = {////inclompete type not allowed
     //    cos(3), sin(0), 0.0f, 0.0f,
     //    -sin(0), cos(0),0.0f, 0.0f,
     //    0.0f, 0.0f, 1.0f, 0.0f,
