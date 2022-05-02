@@ -175,4 +175,19 @@ std::array<float, 16> mat4translate(float x, float y, float z) {
 
     return res;
 }
+    // vfov is the vertical field of view (in the y direction )
+    // aspect is the aspect ratio of the viewport ( width / height )
+    // znear is the distance to the near clip plane ( znear > 0)
+    // zfar is the distance to the far clip plane ( zfar > znear )
+std::array<float, 16> mat4perspective(float vfov, float aspect, float znear, float zfar) {
+    float f = 1/tan(vfov/2);
+    std::array<float, 16> res = {
+        f/aspect, 0.0f, 0.0f, 0.0f ,
+        0.0f, f, 0.0f, 0.0f ,
+        0.0f, 0.0f, -((zfar+znear)/(zfar-znear)),-1.0f ,
+        0.0f, 0.0f, -((2*znear*zfar)/(zfar-znear)), 0.0f
+    };
+
+    return res;
+}
 }  // namespace util

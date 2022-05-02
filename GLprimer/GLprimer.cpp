@@ -127,9 +127,13 @@ int main(int, char*[]) {
     //    0.0f, 0.5f, 0.0f,  // Green
     //    0.0f, 0.0f, 0.0f,  // Blue
     //}; 
-     std::array<GLfloat, 16> matT;
-    std::array<GLfloat, 16> matR;
-    std::array<GLfloat, 16> matRes;
+    std::array<GLfloat, 16> matT;
+    std::array<GLfloat, 16> matP;
+    std::array<GLfloat, 16> matMV;
+    std::array<GLfloat, 16> matRx;
+    std::array<GLfloat, 16> matRy;
+
+
 
     float time;
     // get shaders
@@ -146,7 +150,7 @@ int main(int, char*[]) {
         std::cout << "Unable to locate variable 'time' in shader!\n";
     }
     TriangleSoup myShape;
-    myShape.createSphere(0.5,100);
+    myShape.createBox(0.2f,0.2f,1.0f);
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
@@ -173,20 +177,33 @@ int main(int, char*[]) {
         myShape.render();
 
         // Transformations
-        matT = util::mat4identity();
-        matT = util::mat4translate(0.1, 0.1, 0.0);
-        matR = util::mat4identity();
-        matR = util::mat4roty(time  * M_PI);
-        matRes = util::mat4mult(matT, matR);
+        matP = util::mat4identity();
+        matMV = util::mat4identity();
 
-        GLint locationT = glGetUniformLocation(myShader.id(), "T");
-        GLint locationR = glGetUniformLocation(myShader.id(), "R");
-        GLint locationRes = glGetUniformLocation(myShader.id(), "Res");
+        //translation
+        matT = util::mat4translate(0.0f,0.0f,-3.0f);
+        matMV = util::mat4mult(matMV, matT); 
+
+        // fixed rotation
+        matRx = util::mat4rotx(10.0);
+        matMV = util::mat4mult(matMV, matRx);
+
+        //animated rotation
+        matRy = util::mat4roty(time  * M_PI);
+        matMV = util::mat4mult(matMV, matRy); 
+        
+ 
+
+        //projection
+        matP = util::mat4perspective(M_PI / 4, 1.0, 0.1, 100.0);
 
 
-        glUniformMatrix4fv(locationT, 1, GL_FALSE, matT.data());  // Copy the value
-        glUniformMatrix4fv(locationR, 1, GL_FALSE, matR.data());  // Copy the value
-        glUniformMatrix4fv(locationRes, 1, GL_FALSE, matRes.data());  // Copy the value
+        GLint locationP = glGetUniformLocation(myShader.id(), "P");
+        GLint locationMV = glGetUniformLocation(myShader.id(), "MV");
+
+
+        glUniformMatrix4fv(locationP, 1, GL_FALSE, matP.data());  // Copy the value
+        glUniformMatrix4fv(locationMV, 1, GL_FALSE, matMV.data());  // Copy the value
       
         // Don´t show when bakside
         //glEnable(GL_CULL_FACE);

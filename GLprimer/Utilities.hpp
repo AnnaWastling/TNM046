@@ -42,6 +42,6 @@ std::array<float, 16> mat4roty(float angle);
 std::array<float, 16> mat4rotz(float angle);
 std::array<float, 16> mat4scale(float scale);
 std::array<float, 16> mat4translate(float x, float y, float z);
-
+std::array<float, 16> mat4perspective(float vfov, float aspect, float znear, float zfar);
 
 }  // namespace util
