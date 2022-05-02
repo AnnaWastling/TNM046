@@ -38,6 +38,8 @@
 #include <array>
 #include "Shader.hpp"
 #include "TriangleSoup.hpp"
+#include "Texture.hpp"
+#include "Rotator.hpp"
 
 /*
  * main(int argc, char* argv[]) - the standard C++ entry point for the program
@@ -88,59 +90,33 @@ int main(int, char*[]) {
     // for resizing window
     int width, height;
 
-    // // colorarray
-    //const std::vector<GLfloat> colorArrayData = {
-    //    // P0
-    //    1.0f, 0.0f, 0.3f,  // Red
-    //    0.0f, 0.5f, 0.0f,  // Green
-    //    0.3f, 0.3f, 0.3f,  // Blue
-    //    // P1
-    //    1.0f, 0.0f, 0.3f,  // Red
-    //    0.2f, 0.2f, 0.2f,  // Green
-    //    0.3f, 0.3f, 0.3f,  // Blue
-    //    // P2
-    //    1.0f, 0.0f, 0.3f,  // Red
-    //    0.2f, 0.2f, 0.2f,  // Green
-    //    0.0f, 0.0f, 0.0f,  // Blue
-    //    // P3
-    //    1.0f, 0.0f, 0.3f,  // Red
-    //    0.0f, 0.5f, 0.0f,  // Green
-    //    0.0f, 0.0f, 0.0f,  // Blue
-
-    //    // P4
-    //    0.8f, 0.8f, 0.8f,  // Red
-    //    0.0f, 0.5f, 0.0f,  // Green
-    //    0.3f, 0.3f, 0.3f,  // Blue
-
-    //    // P5
-    //    0.8f, 0.8f, 0.8f,  // Red
-    //    0.2f, 0.2f, 0.2f,  // Green
-    //    0.3f, 0.3f, 0.3f,  // Blue
-
-    //    // P6
-    //    0.8f, 0.8f, 0.8f,  // Red
-    //    0.2f, 0.2f, 0.2f,  // Green
-    //    0.0f, 0.0f, 0.0f,  // Blue
-
-    //    // P7
-    //    0.8f, 0.8f, 0.8f,  // Red
-    //    0.0f, 0.5f, 0.0f,  // Green
-    //    0.0f, 0.0f, 0.0f,  // Blue
-    //}; 
     std::array<GLfloat, 16> matT;
     std::array<GLfloat, 16> matP;
     std::array<GLfloat, 16> matMV;
     std::array<GLfloat, 16> matRx;
     std::array<GLfloat, 16> matRy;
+    std::array<GLfloat, 16> matRz;
+    std::array<GLfloat, 16> matLightR;
 
-
+    TriangleSoup myShape;
+    TriangleSoup mySphere;
+    //myShape.createBox(0.2f, 0.2f, 1.0f);
+    myShape.readOBJ("meshes/teapot.obj");
+    mySphere.createSphere(1, 100);
+    // Generate one texture object with data from a TGA file
+    Texture myTexture;
+    myTexture.createTexture("textures/earth.tga");
 
     float time;
+
     // get shaders
     Shader myShader;
 
     //create the shaders
     myShader.createShader("vertex.glsl", "fragment.glsl");
+
+    // Locate the sampler2D uniform in the shader program
+    GLint locationTex = glGetUniformLocation(myShader.id(), "tex");
     /****************************************************************************/
 
     glfwSwapInterval(0);  // Do not wait for screen refresh between frames
@@ -149,8 +125,9 @@ int main(int, char*[]) {
     if (locationTime == -1) {  // If the variable is not found, -1 is returned
         std::cout << "Unable to locate variable 'time' in shader!\n";
     }
-    TriangleSoup myShape;
-    myShape.createBox(0.2f,0.2f,1.0f);
+
+    KeyRotator myKeyRotator(window);
+    MouseRotator myMouseRotator(window);
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
@@ -170,46 +147,91 @@ int main(int, char*[]) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(myShader.id());  // Activate the shader to set its variables
 
-        /* ---- Rendering code should go here ---- */     
+        /* ---- Rendering code should go here ---- */ 
+
+        myKeyRotator.poll();
+        // Create a rotation matrix that depends on myKeyRotator .phi and myKeyRotator . theta
+        myMouseRotator.poll();
+
         time = static_cast<float>(glfwGetTime());  // Number of seconds since the program was started
         glUniform1f(locationTime, time);        // Copy the value to the shader program
 
-        myShape.render();
+        // Draw the TriangleSoup object mySphere
+        // with a shader program that uses a texture
+        glBindTexture(GL_TEXTURE_2D, myTexture.id());
+        glUniform1i(locationTex, 0);
+        //mySphere.render();
+
+        // restore previous state (no texture, no shader)
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glUseProgram(0);
+
+        //myShape.render();
 
         // Transformations
         matP = util::mat4identity();
         matMV = util::mat4identity();
+        matT = util::mat4identity();
 
         //translation
         matT = util::mat4translate(0.0f,0.0f,-3.0f);
         matMV = util::mat4mult(matMV, matT); 
 
-        // fixed rotation
-        matRx = util::mat4rotx(10.0);
+        // mouse rotation
+        matRx = util::mat4rotx(myMouseRotator.theta());
         matMV = util::mat4mult(matMV, matRx);
 
-        //animated rotation
-        matRy = util::mat4roty(time  * M_PI);
-        matMV = util::mat4mult(matMV, matRy); 
-        
- 
+        // mouse rotation
+        matRz = util::mat4rotx(myMouseRotator.phi());
+        matMV = util::mat4mult(matMV, matRz);
+
+        // key rotation
+        matRx = util::mat4rotx(myKeyRotator.theta());
+        matLightR = util::mat4mult(matLightR, matRx);
+
+        // key rotation
+        matRz = util::mat4rotx(myKeyRotator.phi());
+        matLightR = util::mat4mult(matLightR, matRz); 
 
         //projection
         matP = util::mat4perspective(M_PI / 4, 1.0, 0.1, 100.0);
 
-
         GLint locationP = glGetUniformLocation(myShader.id(), "P");
         GLint locationMV = glGetUniformLocation(myShader.id(), "MV");
-
-
+        GLint locationLR = glGetUniformLocation(myShader.id(), "LR");
+        glUniformMatrix4fv(locationLR, 1, GL_FALSE, matLightR.data());    // Copy the value
         glUniformMatrix4fv(locationP, 1, GL_FALSE, matP.data());  // Copy the value
-        glUniformMatrix4fv(locationMV, 1, GL_FALSE, matMV.data());  // Copy the value
+
       
         // Don´t show when bakside
         //glEnable(GL_CULL_FACE);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //glCullFace(GL_BACK);
+        // 5
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
 
+        // copy to shader
+        glUniformMatrix4fv(locationMV, 1, GL_FALSE, matMV.data());  // Copy the value
+
+
+        // Draw the shape
+        myShape.render();
+       
+      // Transformations
+       matP = util::mat4identity();
+       matMV = util::mat4identity();
+       matT = util::mat4identity();
+
+       // translation
+       matT = util::mat4translate(0.0f, 0.0f, -3.0f);
+       matMV = util::mat4mult(matMV, matT); 
+
+       matRy = util::mat4roty(time*M_PI);
+       matMV = util::mat4mult(matMV, matRy);
+
+       glUniformMatrix4fv(locationMV, 1, GL_FALSE, matMV.data());
+       mySphere.render();
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
 
@@ -221,9 +243,6 @@ int main(int, char*[]) {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
     }
-    /***********************lab1******************************/
-    // release the vertex and index buffers as well as the vertex array
-   // glDeleteBuffers(1, &colorBufferID);
 
     // Close the OpenGL window and terminate GLFW
     glfwDestroyWindow(window);
