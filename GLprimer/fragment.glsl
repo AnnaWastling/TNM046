@@ -11,12 +11,12 @@ uniform float time;
 void main() {
 
     vec3 V = vec3(0.0,0.0,1.0);
-    float n = 25.0;
-    vec3 ka = vec3(0.4, 0.4, 0.4);
-    vec3 Ia = vec3(1.0, 1.0, 1.0);
+    float n = 5.0;
+    vec3 ka = vec3(1.0, 0.5, 0.0);
+    vec3 Ia = vec3(0.1, 0.1, 0.1);
     //vec3 kd = vec3(texture(tex,st)); 
-    vec3 kd = vec3(0.2, 0.4, 0.3);
-    vec3 Id = vec3(1.0, 1.0, 1.0);
+    vec3 kd = vec3(1.0, 1.0, 1.0);
+    vec3 Id = vec3(1.0, 0.5, 0.0);
     vec3 ks = vec3(1.0, 1.0, 1.0);
     vec3 Is = vec3(1.0, 1.0, 1.0);
     
