@@ -27,6 +27,7 @@ void main() {
     vec3 shadedcolor = (Ia * ka) + (Id * kd * dotNL) + (Is * ks * pow(dotRV,n));
 
     finalcolor = vec4(shadedcolor, 1.0);
+    // finalcolor = texture(tex, st); // Use the texture to set the surface color
 
 }
 

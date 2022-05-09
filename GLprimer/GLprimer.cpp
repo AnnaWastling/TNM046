@@ -103,20 +103,22 @@ int main(int, char*[]) {
     //myShape.createBox(0.2f, 0.2f, 1.0f);
     myShape.readOBJ("meshes/teapot.obj");
     mySphere.createSphere(1, 100);
+    // get shaders
+    Shader myShader;
+    // Locate the sampler2D uniform in the shader program
+    GLint locationTex = glGetUniformLocation(myShader.id(), "tex");
     // Generate one texture object with data from a TGA file
     Texture myTexture;
     myTexture.createTexture("textures/earth.tga");
 
     float time;
 
-    // get shaders
-    Shader myShader;
+
 
     //create the shaders
     myShader.createShader("vertex.glsl", "fragment.glsl");
 
-    // Locate the sampler2D uniform in the shader program
-    GLint locationTex = glGetUniformLocation(myShader.id(), "tex");
+
     /****************************************************************************/
 
     glfwSwapInterval(0);  // Do not wait for screen refresh between frames
@@ -199,7 +201,7 @@ int main(int, char*[]) {
         GLint locationP = glGetUniformLocation(myShader.id(), "P");
         GLint locationMV = glGetUniformLocation(myShader.id(), "MV");
         GLint locationLR = glGetUniformLocation(myShader.id(), "LR");
-        glUniformMatrix4fv(locationLR, 1, GL_FALSE, matLightR.data());    // Copy the value
+        glUniformMatrix4fv(locationLR, 1, GL_FALSE, matLightR.data()); // Copy the value
         glUniformMatrix4fv(locationP, 1, GL_FALSE, matP.data());  // Copy the value
 
       
@@ -207,13 +209,12 @@ int main(int, char*[]) {
         //glEnable(GL_CULL_FACE);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //glCullFace(GL_BACK);
-        // 5
+ 
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
+        //glEnable(GL_CULL_FACE);
 
         // copy to shader
         glUniformMatrix4fv(locationMV, 1, GL_FALSE, matMV.data());  // Copy the value
-
 
         // Draw the shape
         myShape.render();
@@ -231,6 +232,7 @@ int main(int, char*[]) {
        matMV = util::mat4mult(matMV, matRy);
 
        glUniformMatrix4fv(locationMV, 1, GL_FALSE, matMV.data());
+
        mySphere.render();
         // Swap buffers, display the image and prepare for next frame
         glfwSwapBuffers(window);
